@@ -34,7 +34,7 @@ def calculate():
         except Exception as e:
             error = str(e)
 
-    return render_template("index.html", result=result, error=error)
+    return render_template("calculator.html", result=result, error=error)
 
 if __name__ == '__main__':
     app.run(debug=True)
