@@ -1,11 +1,6 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
-
-# Simple HTML form template
-# html_form = """
-
-# """
 
 @app.route('/calculate', methods=['GET', 'POST'])
 def calculate():
@@ -14,9 +9,9 @@ def calculate():
 
     if request.method == 'POST':
         try:
-            a = float(request.form['a'])
-            b = float(request.form['b'])
-            operation = request.form['operation']
+            a = float(request.form.get('a', 0))
+            b = float(request.form.get('b', 0))
+            operation = request.form.get('operation', '')
 
             if operation == "add":
                 result = a + b
@@ -31,10 +26,17 @@ def calculate():
                     result = a / b
             else:
                 error = "Invalid operation selected."
+
         except Exception as e:
             error = str(e)
 
+        # Return JSON if 'Accept: application/json' is in header
+        if request.headers.get('Accept') == 'application/json':
+            return jsonify({"result": result, "error": error})
+    
+    # Fallback to HTML render
     return render_template("calculator.html", result=result, error=error)
 
 if __name__ == '__main__':
     app.run(debug=True)
+ 
